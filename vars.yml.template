@@ -1,0 +1,13 @@
+---
+vCenter_user: <user>@vdi.sclabs.net
+vCenter_password: <password>
+vCenter_FQDN: vc-1.vdi.sclabs.net
+vCenter_certs: false
+
+netapp_user: <user>
+netapp_password: <password>
+netapp_FQDN: 10.0.20.210
+
+ssh_pass: ubuntu
+ssh_user: ubuntu
+become_pass: ubuntu

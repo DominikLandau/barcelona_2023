@@ -1,0 +1,20 @@
+plugin: vmware_vm_inventory
+strict: False
+hostname: vc-1.vdi.sclabs.net
+username: <user>@vdi.sclabs.net
+password: <password>
+validate_certs: False
+with_tags: True
+hostnames:
+- guest.ipAddress
+properties:
+- 'guest.ipAddress'
+filters:
+- "'ansible_created' in tags"
+keyed_groups:
+  - key: tags
+    prefix: "vm"
+    seperator: ""
+  - key: "config.name"
+    prefix: "name"
+    seperator: "test"

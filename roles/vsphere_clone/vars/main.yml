@@ -1,0 +1,28 @@
+---
+datacenter: Noris
+vm_cluster: Workload
+folder_path: /Users/Dominik
+folder_name: deployments
+
+vsphere_categorys:
+  - ansible_automation
+
+vsphere_tag:
+  - tag: ansible_created
+    category: ansible_automation
+  - tag: workload
+    category: ansible_automation
+
+vms:
+  - vm_name: deployment_1
+    template_name: ubuntu_desktop_2004
+    vsphere_tag:
+      - tag: ansible_created
+        category: ansible_automation
+  - vm_name: deployment_2
+    template_name: ubuntu_desktop_2004
+    vsphere_tag:
+      - tag: ansible_created
+        category: ansible_automation
+      - tag: workload
+        category: ansible_automation

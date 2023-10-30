@@ -1,0 +1,36 @@
+---
+- name: Create vCenter folder
+  community.vmware.vcenter_folder:
+    datacenter_name: "{{ datacenter }}"
+    parent_folder: "{{ folder_path }}"
+    folder_name: "{{ folder_name }}"
+    folder_type: vm
+    state: present
+
+- name: Create VM from template
+  community.vmware.vmware_guest:
+    name: "{{ item.vm_name }}"
+    template: "{{ item.template_name }}"
+    datacenter: "{{ datacenter }}"
+    cluster: "{{ vm_cluster }}"
+    folder: "{{ folder_path }}/{{ folder_name }}"
+    state: poweredon
+    wait_for_ip_address: yes
+  loop: "{{ vms }}"
+
+- name: Add a new category
+  community.vmware.vmware_category:
+    category_name: "{{ item }}"
+    state: present
+  loop: "{{ vsphere_categorys }}"
+
+- name: Add tags
+  community.vmware.vmware_tag:
+    tag_name: "{{ item.tag }}"
+    category_name: "{{ item.category }}"
+    state: present
+  loop: "{{ vsphere_tag }}"
+
+- name: Tag VM
+  include_tasks: tag_vm.yml
+  loop: "{{ vms }}"

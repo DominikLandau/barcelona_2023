@@ -1,0 +1,54 @@
+---
+- name: Apply NFS and vCenter roles
+  hosts: localhost
+  vars_files:
+    - ./vars.yml
+  environment:
+    VMWARE_HOST: "{{ vCenter_FQDN }}"
+    VMWARE_PASSWORD: "{{ vCenter_password }}"
+    VMWARE_USER: "{{ vCenter_user }}"
+    VMWARE_VALIDATE_CERTS: "{{ vCenter_certs }}"
+  tasks:
+    - name: Create NetApp infrastructure
+      include_role:
+        name: ontap_nfs
+   
+    - name: Create VMware VM
+      include_role:
+        name: vsphere_clone
+
+  post_tasks:
+    - name: Refresh inventory to ensure new instances exist in inventory
+      ansible.builtin.meta: refresh_inventory
+
+
+- name: Modify created VMs
+  hosts: vm_ansible_created
+  become: yes
+  vars:
+    ansible_ssh_pass: "{{ ssh_pass }}"
+    ansible_ssh_user: "{{ ssh_user }}"
+    ansible_become_pass: "{{ become_pass }}"
+
+  tasks:
+    - name: Install NFS package
+      ansible.builtin.apt:
+        name: nfs-common
+        state: present
+        update_cache: yes
+    
+    - name: Create mount folder
+      ansible.builtin.file:
+        path: /home/ubuntu/nfs_mount
+        state: directory
+        mode: "0755"
+        owner: ubuntu
+        group: ubuntu
+    
+    - name: Mount path
+      ansible.posix.mount:
+        src: "10.0.20.211:/nfs_vol"
+        path: /home/ubuntu/nfs_mount
+        opts: rw,sync,hard
+        state: mounted
+        fstype: nfs

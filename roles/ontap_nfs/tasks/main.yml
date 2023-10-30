@@ -1,0 +1,73 @@
+---
+- name: Create aggregate
+  netapp.ontap.na_ontap_aggregate:
+    hostname: "{{ netapp_FQDN }}"
+    username: "{{ netapp_user }}"
+    password: "{{ netapp_password }}"
+    validate_certs: false
+    wait_for_online: true
+    state: present
+    name: "{{ agg_name }}"
+    disk_count: "{{ agg_disk_count }}"
+    raid_type: "{{ agg_raid_type }}"
+    nodes: "{{ agg_node }}"
+
+- name: Create vServer
+  netapp.ontap.na_ontap_svm:
+    hostname: "{{ netapp_FQDN }}"
+    username: "{{ netapp_user }}"
+    password: "{{ netapp_password }}"
+    validate_certs: false
+    state: present
+    name: "{{ vserver_name }}"
+    language: "{{ vserver_language }}"
+    aggr_list: "{{ vserver_aggregate_list }}"
+    services:
+      nfs:
+        allowed: "{{ vserver_nfs_allowed }}"
+        enabled: "{{ vserver_nfs_enabled }}"
+
+- name: Create lif
+  netapp.ontap.na_ontap_interface:
+    hostname: "{{ netapp_FQDN }}"
+    username: "{{ netapp_user }}"
+    password: "{{ netapp_password }}"
+    validate_certs: false
+    state: present
+    interface_name: "{{ lif_name }}"
+    home_port: "{{ lif_port }}"
+    home_node: "{{ lif_node }}"
+    service_policy: "{{ lif_sevice_policy }}"
+    address: "{{ lif_address }}"
+    netmask: "{{ lif_netamsk }}"
+    vserver: "{{ lif_vserver }}"  
+
+- name: Create volume
+  netapp.ontap.na_ontap_volume:
+    hostname: "{{ netapp_FQDN }}"
+    username: "{{ netapp_user }}"
+    password: "{{ netapp_password }}"
+    validate_certs: false
+    unix_permissions: 777
+    name: "{{ volume_name }}"
+    size: "{{ volume_size }}"
+    size_unit: "{{ volume_size_unit }}"
+    vserver: "{{ volume_vserver }}"
+    aggregate_name: "{{ volume_agg }}"
+    junction_path: "{{ volume_junction }}"
+
+- name: Add rule to export policy
+  netapp.ontap.na_ontap_export_policy_rule:
+    hostname: "{{ netapp_FQDN }}"
+    username: "{{ netapp_user }}"
+    password: "{{ netapp_password }}"
+    validate_certs: false
+    state: present
+    name: "{{ ex_pol_rule_pol }}"
+    rule_index: "{{ ex_pol_rule_index }}"
+    vserver: "{{ ex_pol_rule_vserver }}"
+    ro_rule: "{{ ex_pol_rule_ro }}"
+    rw_rule: "{{ ex_pol_rule_rw }}"
+    super_user_security: "{{ ex_pol_rule_super_user }}"
+    client_match: "{{ ex_pol_rule_client }}"
+    protocol: "{{ ex_pol_rule_protocol }}"    

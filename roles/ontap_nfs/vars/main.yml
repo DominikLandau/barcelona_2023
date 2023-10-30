@@ -1,0 +1,40 @@
+---
+# aggregate configuration
+agg_name: newagg1
+agg_disk_count: 8
+agg_raid_type: raid_tec
+agg_node: test01-01
+
+# vserver configuration
+vserver_name: nfs_vs
+vserver_language: de.utf_8
+vserver_aggregate_list: newagg1
+vserver_nfs_allowed: true
+vserver_nfs_enabled: true
+
+# network interface configuration
+lif_name: nfs_lif
+lif_port: e0d
+lif_node: test01-01
+lif_sevice_policy: default-data-files
+lif_address: "10.0.20.211"
+lif_netamsk: "255.255.255.0"
+lif_vserver: nfs_vs
+
+# volume configuration
+volume_name: nfs_vol
+volume_size: 3
+volume_size_unit: gb
+volume_agg: newagg1
+volume_junction: /nfs_vol
+volume_vserver: nfs_vs  
+
+# export policy configuration
+ex_pol_rule_pol: default
+ex_pol_rule_index: 1
+ex_pol_rule_vserver: nfs_vs
+ex_pol_rule_ro: any
+ex_pol_rule_rw: any
+ex_pol_rule_super_user: any
+ex_pol_rule_client: "0.0.0.0/0"
+ex_pol_rule_protocol: any
